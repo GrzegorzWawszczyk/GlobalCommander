@@ -34,3 +34,4 @@ void GCMDMainWindow::changeDrive(int index)
     //qDebug() << ui->cb_disk->currentText();
     //qDebug() << index;
 }
+// test comment
