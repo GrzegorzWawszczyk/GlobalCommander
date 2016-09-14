@@ -12,6 +12,7 @@ public:
 
     enum Columns
     {
+        Icon,
         Name,
         Extension,
         Size,
@@ -36,10 +37,12 @@ public:
     void setDirectory(const QString& path);
 
 public slots:
-    void setDirectoryByIndex(const QModelIndex& index);
+    void handleActivate(const QModelIndex& index);
 
 private:
     QFileInfoList files;
+
+    int fontSize;
 };
 
 #endif // FILELISTMODEL_H
