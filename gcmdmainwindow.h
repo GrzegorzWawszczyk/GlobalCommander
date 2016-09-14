@@ -15,8 +15,9 @@ public:
     explicit GCMDMainWindow(QWidget *parent = 0);
     ~GCMDMainWindow();
 
-private slots:
-    void changeDrive(int index);
+//private slots:
+//    void changeLeftDrive(int index);
+//    void changeRightDrive(int index);
 
 private:
     Ui::GCMDMainWindow *ui;

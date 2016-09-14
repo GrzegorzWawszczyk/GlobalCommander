@@ -13,8 +13,17 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        gcmdmainwindow.cpp
+        gcmdmainwindow.cpp \
+    filelistmodel.cpp \
+    drivelistmodel.cpp \
+    drivescombobox.cpp \
+    filesview.cpp
 
-HEADERS  += gcmdmainwindow.h
+HEADERS  += gcmdmainwindow.h \
+    filelistmodel.h \
+    drivelistmodel.h \
+    drivescombobox.h \
+    filesview.h
 
-FORMS    += gcmdmainwindow.ui
+FORMS    += gcmdmainwindow.ui \
+    filesview.ui
