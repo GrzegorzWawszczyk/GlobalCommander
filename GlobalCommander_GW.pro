@@ -17,13 +17,15 @@ SOURCES += main.cpp\
     filelistmodel.cpp \
     drivelistmodel.cpp \
     drivescombobox.cpp \
-    filesview.cpp
+    filesview.cpp \
+    filestableview.cpp
 
 HEADERS  += gcmdmainwindow.h \
     filelistmodel.h \
     drivelistmodel.h \
     drivescombobox.h \
-    filesview.h
+    filesview.h \
+    filestableview.h
 
 FORMS    += gcmdmainwindow.ui \
     filesview.ui

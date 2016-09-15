@@ -1,6 +1,7 @@
 #include "drivescombobox.h"
 
 #include <QDebug>
+#include <QFileIconProvider>
 
 DrivesComboBox::DrivesComboBox(QWidget *parent) : QComboBox(parent)
 {
@@ -9,8 +10,8 @@ DrivesComboBox::DrivesComboBox(QWidget *parent) : QComboBox(parent)
 
 void DrivesComboBox::showPopup()
 {
-    QString lastItem = this->currentText();
+    QString lastItem = currentText();
     emit clicked();
     QComboBox::showPopup();
-    this->setCurrentText(lastItem);
+    setCurrentText(lastItem);
 }

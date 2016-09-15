@@ -3,6 +3,7 @@
 
 #include <QAbstractListModel>
 #include <QFileInfoList>
+#include <QFileSystemWatcher>
 
 class FileListModel : public QAbstractListModel
 {
@@ -17,6 +18,7 @@ public:
         Extension,
         Size,
         Date,
+        Attributes,
         Count
     };
 
@@ -35,13 +37,25 @@ public:
 
 
     void setDirectory(const QString& path);
+    bool removeDirectory(const QString & path);
+
 
 public slots:
     void handleActivate(const QModelIndex& index);
+    void cdUp();
+    void deleteFile(int index);
+
+private slots:
+    void refreshDirectory();
+
+signals:
+    void directoryChanged(const QString& path);
+    void fileActivated();
 
 private:
+    QString currentPath;
     QFileInfoList files;
-
+    QFileSystemWatcher watcher;
     int fontSize;
 };
 

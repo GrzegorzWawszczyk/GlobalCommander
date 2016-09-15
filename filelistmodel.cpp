@@ -5,6 +5,7 @@
 #include <QDir>
 #include <QFileIconProvider>
 #include <QFont>
+#include <QMessageBox>
 
 FileListModel::FileListModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -14,7 +15,13 @@ FileListModel::FileListModel(QObject *parent)
 
     setDirectory(drives.at(0).absolutePath());
 
-    fontSize = 10;
+    emit directoryChanged(drives.at(0).absolutePath());
+
+    watcher.addPath(drives.at(0).absolutePath());
+
+    connect(&watcher, &QFileSystemWatcher::directoryChanged, this, &FileListModel::refreshDirectory);
+
+    fontSize = 7;
 }
 
 FileListModel::~FileListModel()
@@ -31,17 +38,19 @@ QVariant FileListModel::headerData(int section, Qt::Orientation orientation, int
             switch (section)
             {
             case Columns::Name:
-                return "Name";
+                return tr("Name");
             case Columns::Extension:
-                return "Ext";
+                return tr("Ext");
             case Columns::Size:
-                return "Size";
+                return tr("Size");
             case Columns::Date:
-                return "Date";
+                return tr("Date");
+            case Columns::Attributes:
+                return tr("Atrr");
             }
         }
         if (role == Qt::FontRole)
-            return QFont("", fontSize, QFont::Bold);
+            return QFont("Segoe UI", fontSize, QFont::Bold);
     }
 
     return QVariant();
@@ -81,7 +90,7 @@ QVariant FileListModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     if (role == Qt::FontRole)
-        return QFont("", fontSize, QFont::Normal);
+        return QFont("Segoe UI", fontSize, QFont::Normal);
 
     else if (role == Qt::DisplayRole)
     {
@@ -97,7 +106,7 @@ QVariant FileListModel::data(const QModelIndex &index, int role) const
         case Columns::Extension:
             if (file.isDir())
                 return "";
-            return file.suffix();
+            return file.completeSuffix();
 
         case Columns::Size:
             if (file.isDir())
@@ -106,6 +115,20 @@ QVariant FileListModel::data(const QModelIndex &index, int role) const
 
         case Columns::Date:
             return file.lastModified();
+
+        case Columns::Attributes:
+            QString str = "";
+            str = str + (file.permission(QFile::ReadUser) ? "r" : "-") +
+                    (file.permission(QFile::WriteUser) ? "w" : "-") +
+                    (file.permission(QFile::ExeUser) ? "x" : "-") +
+                    (file.permission(QFile::ReadGroup) ? "r" : "-") +
+                    (file.permission(QFile::WriteGroup) ? "w" : "-") +
+                    (file.permission(QFile::ExeGroup) ? "x" : "-") +
+                    (file.permission(QFile::ReadOther) ? "r" : "-") +
+                    (file.permission(QFile::WriteOther) ? "w" : "-") +
+                    (file.permission(QFile::ExeOther) ? "x" : "-");
+            return str;
+
         }
     }
 
@@ -113,7 +136,7 @@ QVariant FileListModel::data(const QModelIndex &index, int role) const
     {
         const QFileInfo& file = files.at(index.row());
         QFileIconProvider fip;
-        return fip.icon(file).pixmap(fontSize * 0.75);
+        return fip.icon(file).pixmap(fontSize * 1.33);
     }
 
     // FIXME: Implement me!
@@ -124,17 +147,77 @@ void FileListModel::setDirectory(const QString& path)
 {
     beginResetModel();
 
-    QDir dir;
-    dir.setPath(path);
+    watcher.removePath(currentPath);
+    watcher.addPath(path);
+//    qDebug() << watcher.directories();
+
+    currentPath = path;
+
+    QDir dir(path);
+    //dir.setPath(path);
     files = dir.entryInfoList(QDir::AllEntries | QDir::NoDot, QDir::DirsFirst | QDir::IgnoreCase);
+    emit directoryChanged(path);
 
     endResetModel();
 }
+
+bool FileListModel::removeDirectory(const QString & path)
+{
+    bool result = true;
+       QDir dir(path);
+//       dir.setPath(path);
+
+       if (dir.exists()) {
+           Q_FOREACH(QFileInfo info, dir.entryInfoList(QDir::NoDotAndDotDot | QDir::System | QDir::Hidden  | QDir::AllDirs | QDir::Files, QDir::DirsFirst)) {
+               if (info.isDir()) {
+                   result = removeDirectory(info.absoluteFilePath());
+               }
+               else {
+                   result = QFile::remove(info.absoluteFilePath());
+               }
+
+               if (!result) {
+                   return result;
+               }
+           }
+           result = QDir().rmdir(path);
+       }
+       return result;
+}
+
+
 
 void FileListModel::handleActivate(const QModelIndex &index)
 {
     if (files.at(index.row()).isDir())
         setDirectory(files.at(index.row()).absoluteFilePath());
     else
-        qDebug() << "I still can't open files :( ";
+        emit fileActivated();
+}
+
+void FileListModel::cdUp()
+{
+    QDir dir;
+    dir.setPath(currentPath);
+    if (!dir.isRoot())
+    {
+        dir.cdUp();
+        setDirectory(dir.absolutePath());
+    }
+}
+
+void FileListModel::deleteFile(int index)
+{
+    if (QMessageBox::question(0, tr("Confirm delete"), tr("Are you sure you want to delete this?")) == QMessageBox::Yes)
+    {
+        if (!files.at(index).isDir())
+            QFile::remove(files.at(index).filePath());
+        else
+            removeDirectory(files.at(index).filePath());
+    }
+}
+
+void FileListModel::refreshDirectory()
+{
+    setDirectory(currentPath);
 }

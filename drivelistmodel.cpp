@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QDir>
+#include <QFileIconProvider>
 #include <QFileInfoList>
 
 DriveListModel::DriveListModel(QObject *parent)
@@ -22,11 +23,16 @@ int DriveListModel::rowCount(const QModelIndex &/*parent*/) const
 
 QVariant DriveListModel::data(const QModelIndex &index, int role) const
 {
-    if (!index.isValid() || index.row() >= driveList.size() || role != Qt::DisplayRole)
+    if (!index.isValid() || index.row() >= driveList.size() || (role != Qt::DisplayRole && role != Qt::DecorationRole))
         return QVariant();
 
-    // FIXME: Implement me!
-    return driveList.at(index.row());
+    if (role == Qt::DisplayRole)
+        return driveList.at(index.row());
+    if (role == Qt::DecorationRole){
+        QFileIconProvider provider;
+
+        return provider.icon(QFileIconProvider::Drive);
+    }
 }
 
 void DriveListModel::changeDriveList()
@@ -41,6 +47,6 @@ void DriveListModel::changeDriveList()
            driveList.append(driveInfo.absolutePath());
        }
 
-       endResetModel();
+    endResetModel();
 
 }
