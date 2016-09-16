@@ -17,7 +17,11 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="DrivesComboBox" name="cb_drive"/>
+      <widget class="DrivesComboBox" name="cb_drive">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="l_space">

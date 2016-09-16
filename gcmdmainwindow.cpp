@@ -14,6 +14,9 @@ GCMDMainWindow::GCMDMainWindow(QWidget *parent) :
     ui(new Ui::GCMDMainWindow)
 {
     ui->setupUi(this);
+
+    dynamic_cast<FilesView*>(ui->fv_left)->setSecondView(ui->fv_right);
+    dynamic_cast<FilesView*>(ui->fv_right)->setSecondView(ui->fv_left);
 }
 
 GCMDMainWindow::~GCMDMainWindow()

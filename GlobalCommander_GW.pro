@@ -4,7 +4,9 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT      += core gui
+
+QT      += concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -18,14 +20,20 @@ SOURCES += main.cpp\
     drivelistmodel.cpp \
     drivescombobox.cpp \
     filesview.cpp \
-    filestableview.cpp
+    filestableview.cpp \
+    fileoperationshandler.cpp \
+    filescopier.cpp \
+    filesmover.cpp
 
 HEADERS  += gcmdmainwindow.h \
     filelistmodel.h \
     drivelistmodel.h \
     drivescombobox.h \
     filesview.h \
-    filestableview.h
+    filestableview.h \
+    fileoperationshandler.h \
+    filescopier.h \
+    filesmover.h
 
 FORMS    += gcmdmainwindow.ui \
     filesview.ui

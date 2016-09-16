@@ -8,12 +8,7 @@
 DriveListModel::DriveListModel(QObject *parent)
     : QAbstractListModel(parent)
 {
-    QFileInfoList drives = QDir::drives();
-
-        for (QFileInfo driveInfo : drives)
-        {
-            driveList.append(driveInfo.absolutePath());
-        }
+    refreshDriveList();
 }
 
 int DriveListModel::rowCount(const QModelIndex &/*parent*/) const
@@ -37,16 +32,22 @@ QVariant DriveListModel::data(const QModelIndex &index, int role) const
 
 void DriveListModel::changeDriveList()
 {
+
     beginResetModel();
 
-       driveList.clear();
-       QFileInfoList drives = QDir::drives();
-
-       for (QFileInfo driveInfo : drives)
-       {
-           driveList.append(driveInfo.absolutePath());
-       }
+    refreshDriveList();
 
     endResetModel();
 
+}
+
+void DriveListModel::refreshDriveList()
+{
+    driveList.clear();
+    QFileInfoList drives = QDir::drives();
+
+        for (QFileInfo driveInfo : drives)
+        {
+            driveList.append(driveInfo.absolutePath());
+        }
 }

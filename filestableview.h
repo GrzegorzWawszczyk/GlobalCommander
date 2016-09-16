@@ -16,7 +16,11 @@ public:
 
 signals:
     void backspaceClicked();
-    void deleteClicked(int);
+    void deleteClicked(const QSet<int>&);
+    void F5Clicked(const QSet<int>&);
+    void F6Clicked(const QSet<int>&);
+    void F7Clicked();
+    void tabClicked();
 
 private:
     void keyPressEvent(QKeyEvent* event) override;

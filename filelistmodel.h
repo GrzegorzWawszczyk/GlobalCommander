@@ -23,7 +23,6 @@ public:
     };
 
     explicit FileListModel(QObject *parent = 0);
-    ~FileListModel();
 
     // Header:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
@@ -37,26 +36,36 @@ public:
 
 
     void setDirectory(const QString& path);
-    bool removeDirectory(const QString & path);
-
+    QString getCurrentPath();
+    void copyFiles(QSet<int> indexes, QString path);
+    void moveFiles(QSet<int> indexes, const QString& path);
+    void checkIfInDeletedDirectory(const QString &path);
 
 public slots:
     void handleActivate(const QModelIndex& index);
     void cdUp();
-    void deleteFile(int index);
+    void deleteFiles(QSet<int> indexes);
 
 private slots:
     void refreshDirectory();
+    void checkOverwrite(int& response, const QString& fileName);
+    void checkMerge(int& response, const QString &dirName);
 
 signals:
     void directoryChanged(const QString& path);
     void fileActivated();
+    void deletingDirectory(const QString& path);
 
-private:
-    QString currentPath;
+private:    
     QFileInfoList files;
+    QString currentPath;
     QFileSystemWatcher watcher;
     int fontSize;
+
+    bool copyDirectory(const QString &sourcePath, const QString &destinationPath, bool &yesToAll);
+    bool moveDirectory(const QString &sourcePath, const QString &destinationPath, bool &yesToAll);
+    bool copyFiles(QFileInfoList &filesToCopy, const QString &path, bool &yesToAll);
+    bool moveFiles(QFileInfoList &filesToMove, const QString &path, bool &yesToAll);
 };
 
 #endif // FILELISTMODEL_H

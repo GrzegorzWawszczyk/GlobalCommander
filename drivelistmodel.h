@@ -21,6 +21,7 @@ public slots:
 
 private:
     QStringList driveList;
+    void refreshDriveList();
 
 };
 
