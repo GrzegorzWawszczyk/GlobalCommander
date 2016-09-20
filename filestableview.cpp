@@ -1,5 +1,8 @@
 #include "filestableview.h"
+#include "gcmdmainwindow.h"
 
+#include <QAction>
+#include <QApplication>
 #include <QDebug>
 
 FilesTableView::FilesTableView(QWidget *parent)
@@ -8,36 +11,45 @@ FilesTableView::FilesTableView(QWidget *parent)
 
 }
 
+void FilesTableView::copySelected()
+{
+    if (this == QApplication::focusWidget())
+    {
+        emit copyClicked(getSelectedIndexes());
+    }
+}
+
+void FilesTableView::moveSelected()
+{
+    if (this == QApplication::focusWidget())
+    {
+        emit moveClicked(getSelectedIndexes());
+    }
+}
+
+void FilesTableView::deleteSelected()
+{
+    if (this == QApplication::focusWidget())
+    {
+        emit deleteClicked(getSelectedIndexes());
+    }
+}
+
 void FilesTableView::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Backspace)
         emit backspaceClicked();
     else if (event->key() == Qt::Key_Delete)
     {
-        QSet<int> indexes;
-
-        for (QModelIndex index: selectedIndexes())
-            indexes.insert(index.row());
-
-        emit deleteClicked(indexes);
+        emit deleteClicked(getSelectedIndexes());
     }
     else if (event->key() == Qt::Key_F5)
     {
-        QSet<int> indexes;
-
-        for (QModelIndex index: selectedIndexes())
-            indexes.insert(index.row());
-
-        emit F5Clicked(indexes);
+        emit F5Clicked(getSelectedIndexes());
     }
     else if (event->key() == Qt::Key_F6)
     {
-        QSet<int> indexes;
-
-        for (QModelIndex index: selectedIndexes())
-            indexes.insert(index.row());
-
-        emit F6Clicked(indexes);
+        emit F6Clicked(getSelectedIndexes());
     }
     else if (event->key() == Qt::Key_F7)
     {
@@ -49,4 +61,14 @@ void FilesTableView::keyPressEvent(QKeyEvent *event)
     }
     else
         QTableView::keyPressEvent(event);
+}
+
+QSet<int> FilesTableView::getSelectedIndexes()
+{
+    QSet<int> indexes;
+
+    for (QModelIndex index: selectedIndexes())
+        indexes.insert(index.row());
+
+    return indexes;
 }

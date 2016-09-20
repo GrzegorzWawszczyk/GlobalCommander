@@ -21,9 +21,18 @@ signals:
     void F6Clicked(const QSet<int>&);
     void F7Clicked();
     void tabClicked();
+    void copyClicked(const QSet<int>&);
+    void moveClicked(const QSet<int>&);
+
+public slots:
+    void copySelected();
+    void moveSelected();
+    void deleteSelected();
 
 private:
     void keyPressEvent(QKeyEvent* event) override;
+
+    QSet<int> getSelectedIndexes();
 
 };
 

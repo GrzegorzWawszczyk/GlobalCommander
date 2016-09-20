@@ -16,10 +16,18 @@ public:
     ~FilesView();
     void setSecondView(FilesView*);
 
+signals:
+    void actionCopyClicked();
+    void actionMoveClicked();
+    void actionDeleteClicked();
+
 public slots:
     void changePathLabelAndSpaceLabel(const QString&);
     void showInfo();  // DELETE LATER !!!
     void checkIfInDeletedDirectory(const QString& path);
+    void handleActionCopyClick();
+    void handleActionMoveClick();
+    void handleActionDeleteClick();
 
 private slots:
     void changeDrive(int);

@@ -29,6 +29,11 @@ FilesView::FilesView(QWidget *parent) :
     connect(ui->tv_files, &FilesTableView::F6Clicked, this, &FilesView::moveFiles);
     connect(ui->tv_files, &FilesTableView::F7Clicked, this, &FilesView::makeDir);
     connect(ui->tv_files, &FilesTableView::tabClicked, this, &FilesView::changeFocus);
+    connect(this, &FilesView::actionCopyClicked, ui->tv_files, &FilesTableView::copySelected);
+    connect(ui->tv_files, &FilesTableView::copyClicked, this, &FilesView::copyFiles);
+    connect(this, &FilesView::actionMoveClicked, ui->tv_files, &FilesTableView::moveSelected);
+    connect(ui->tv_files, &FilesTableView::moveClicked, this, &FilesView::moveFiles);
+    connect(this, &FilesView::actionDeleteClicked, ui->tv_files, &FilesTableView::deleteSelected);
     connect(flm, &FileListModel::deletingDirectory, this, &FilesView::checkIfSecondViewInDeletedDirectory);
 
     ui->tv_files->setModel(flm);
@@ -84,6 +89,21 @@ void FilesView::showInfo()
 void FilesView::checkIfInDeletedDirectory(const QString &path)
 {
     dynamic_cast<FileListModel*>(ui->tv_files->model())->checkIfInDeletedDirectory(path);
+}
+
+void FilesView::handleActionCopyClick()
+{
+    emit actionCopyClicked();
+}
+
+void FilesView::handleActionMoveClick()
+{
+    emit actionMoveClicked();
+}
+
+void FilesView::handleActionDeleteClick()
+{
+    emit actionDeleteClicked();
 }
 
 void FilesView::changeDrive(int index)

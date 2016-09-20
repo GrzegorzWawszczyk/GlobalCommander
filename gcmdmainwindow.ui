@@ -39,6 +39,10 @@
     <property name="title">
      <string>Files</string>
     </property>
+    <addaction name="separator"/>
+    <addaction name="a_copy"/>
+    <addaction name="a_move"/>
+    <addaction name="a_delete"/>
    </widget>
    <widget class="QMenu" name="menuConfiguration">
     <property name="title">
@@ -49,6 +53,21 @@
    <addaction name="menuConfiguration"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="a_copy">
+   <property name="text">
+    <string>Copy Files</string>
+   </property>
+  </action>
+  <action name="a_move">
+   <property name="text">
+    <string>Move files</string>
+   </property>
+  </action>
+  <action name="a_delete">
+   <property name="text">
+    <string>Delete files</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>

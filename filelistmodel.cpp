@@ -238,38 +238,6 @@ void FileListModel::moveFiles(QSet<int> indexes, const QString &path)
      connect(mover, &FilesMover::fileExists, this, &FileListModel::checkOverwrite, Qt::BlockingQueuedConnection);
      connect(mover, &FilesMover::dirExists, this, &FileListModel::checkMerge, Qt::BlockingQueuedConnection);
      mover->start();
-
-//         QFileInfo file = files.at(index);
-//         if (file.isFile())
-//         {
-//             if (QFileInfo(path + "/" + file.fileName()).exists() && yesToAll)
-//                sourceFiles.append(file);
-//             else if (QFileInfo(path + "/" + file.fileName()).exists() && !yesToAll)
-//             {
-//                int response = QMessageBox::question(nullptr, tr("Confirm overwrite"), tr("Do you want to overwrite ") + file.fileName() + "?", QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::No | QMessageBox::NoToAll );
-
-//                if (response == QMessageBox::YesToAll)
-//                {
-//                    yesToAll = true;
-//                    sourceFiles.append(file);
-//                }
-//                else if (response == QMessageBox::Yes)
-//                    sourceFiles.append(file);
-
-//                else if (response == QMessageBox::NoToAll)
-//                    break;
-//             }
-//             else
-//                 sourceFiles.append(file);
-
-//         }
-//         else
-//         {
-//             if (!moveDirectory(file.filePath(), path, yesToAll))
-//                 break;
-//         }
-//     }
-//     FileOperationsHandler::moveFiles(currentPath, sourceFiles, path, false);
 }
 
 void FileListModel::checkIfInDeletedDirectory(const QString &path)

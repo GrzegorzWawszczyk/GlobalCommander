@@ -15,6 +15,8 @@ public:
     explicit GCMDMainWindow(QWidget *parent = 0);
     ~GCMDMainWindow();
 
+    QAction* getActionCopyPointer();
+
 //private slots:
 //    void changeLeftDrive(int index);
 //    void changeRightDrive(int index);

@@ -1,6 +1,7 @@
 #include "fileoperationshandler.h"
 #include "filescopier.h"
 
+#include <QApplication>
 #include <QDebug>
 #include <QDir>
 #include <QMessageBox>
