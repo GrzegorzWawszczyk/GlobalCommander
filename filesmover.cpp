@@ -14,6 +14,9 @@ FilesMover::FilesMover(QFileInfoList &sourceFiles, QString destPath)
 
 void FilesMover::run()
 {
+    if (sourceFiles.first().dir().path() == destPath)
+        return;
+
     move(sourceFiles, destPath);
 }
 

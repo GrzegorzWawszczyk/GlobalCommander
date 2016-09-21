@@ -29,6 +29,12 @@ FilesView::FilesView(QWidget *parent) :
     connect(ui->tv_files, &FilesTableView::F6Clicked, this, &FilesView::moveFiles);
     connect(ui->tv_files, &FilesTableView::F7Clicked, this, &FilesView::makeDir);
     connect(ui->tv_files, &FilesTableView::tabClicked, this, &FilesView::changeFocus);
+    connect(ui->tv_files, &FilesTableView::newTabCombinationClicked, this, [this](){
+       emit newTabCombinationClicked(dynamic_cast<FileListModel*>(ui->tv_files->model())->getCurrentPath());
+    });
+    connect(ui->tv_files, &FilesTableView::closeTabCombinationClicked, this, [this](){
+       emit closeTabCombinationClicked();
+    });
     connect(this, &FilesView::actionCopyClicked, ui->tv_files, &FilesTableView::copySelected);
     connect(ui->tv_files, &FilesTableView::copyClicked, this, &FilesView::copyFiles);
     connect(this, &FilesView::actionMoveClicked, ui->tv_files, &FilesTableView::moveSelected);
@@ -42,6 +48,7 @@ FilesView::FilesView(QWidget *parent) :
 
     QFileInfoList drives = QDir::drives();
     ui->l_path->setText(drives.first().absolutePath());
+    emit pathChanged(drives.first().absolutePath());
     currentDrivePath = drives.first().absolutePath();
 
     setSpaceInfo();
@@ -75,10 +82,26 @@ void FilesView::setSecondView(FilesView *pointer)
     secondView = pointer;
 }
 
-void FilesView::changePathLabelAndSpaceLabel(const QString& path)
+void FilesView::setDirectory(const QString &path)
 {
-    ui->l_path->setText(path);
+    dynamic_cast<FileListModel*>(ui->tv_files->model())->setDirectory(path);
+}
+
+void FilesView::setDrive(const QString &path)
+{
+    QDir dir = QDir(path);
+    while(dir.cdUp());
+    ui->cb_drive->setCurrentText(dir.path());
+}
+
+void FilesView::changePathLabelAndSpaceLabel(const QFileInfo &path)
+{
+    ui->l_path->setText(path.filePath());
     setSpaceInfo();
+    if (!path.isRoot())
+        emit pathChanged(path.fileName());
+    else
+        emit pathChanged(path.path());
 }
 
 void FilesView::showInfo()
@@ -110,8 +133,8 @@ void FilesView::changeDrive(int index)
 {
     if (index >=0 && ui->cb_drive->currentText() != currentDrivePath)
     {
-        dynamic_cast<FileListModel*>(ui->tv_files->model())->setDirectory(ui->cb_drive->currentText());
         currentDrivePath = ui->cb_drive->currentText();
+        dynamic_cast<FileListModel*>(ui->tv_files->model())->setDirectory(ui->cb_drive->currentText());        
     }
 }
 

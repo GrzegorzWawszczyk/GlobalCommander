@@ -20,7 +20,7 @@ FileListModel::FileListModel(QObject *parent)
 
     setDirectory(drives.first().absolutePath());
 
-    emit directoryChanged(drives.first().absolutePath());
+    //emit directoryChanged(drives.first().absolutePath());
 
     watcher.addPath(drives.first().absolutePath());
 
@@ -157,7 +157,7 @@ void FileListModel::setDirectory(const QString& path)
 
     //dir.setPath(path);
     files = dir.entryInfoList(QDir::AllEntries | QDir::NoDot, QDir::DirsFirst | QDir::IgnoreCase);
-    emit directoryChanged(path);
+    emit directoryChanged(QFileInfo(path));
 
     endResetModel();
 }
@@ -211,6 +211,9 @@ void FileListModel::copyFiles(QSet<int> indexes, QString path)
     if (!QDir(currentPath).isRoot() && indexes.contains(0))
         indexes.remove(0);
 
+    if (indexes.count() == 0)
+        return;
+
     QFileInfoList sourceFiles;
      for (int index : indexes)
      {
@@ -228,16 +231,19 @@ void FileListModel::moveFiles(QSet<int> indexes, const QString &path)
     if (!QDir(currentPath).isRoot() && indexes.contains(0))
         indexes.remove(0);
 
+    if (indexes.count() == 0)
+        return;
+
     QFileInfoList sourceFiles;
-     for (int index : indexes)
-     {
-         sourceFiles.append(files.at(index));
-     }
-     FilesMover* mover = new FilesMover(sourceFiles, path);
-     connect(mover, &FilesMover::finished, mover, &FilesMover::deleteLater);
-     connect(mover, &FilesMover::fileExists, this, &FileListModel::checkOverwrite, Qt::BlockingQueuedConnection);
-     connect(mover, &FilesMover::dirExists, this, &FileListModel::checkMerge, Qt::BlockingQueuedConnection);
-     mover->start();
+    for (int index : indexes)
+    {
+        sourceFiles.append(files.at(index));
+    }
+    FilesMover* mover = new FilesMover(sourceFiles, path);
+    connect(mover, &FilesMover::finished, mover, &FilesMover::deleteLater);
+    connect(mover, &FilesMover::fileExists, this, &FileListModel::checkOverwrite, Qt::BlockingQueuedConnection);
+    connect(mover, &FilesMover::dirExists, this, &FileListModel::checkMerge, Qt::BlockingQueuedConnection);
+    mover->start();
 }
 
 void FileListModel::checkIfInDeletedDirectory(const QString &path)

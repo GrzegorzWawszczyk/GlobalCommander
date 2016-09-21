@@ -1,6 +1,8 @@
 #ifndef GCMDMAINWINDOW_H
 #define GCMDMAINWINDOW_H
 
+#include "filesview.h"
+
 #include <QMainWindow>
 
 namespace Ui {
@@ -11,11 +13,15 @@ class GCMDMainWindow : public QMainWindow
 {
     Q_OBJECT
 
+
 public:
     explicit GCMDMainWindow(QWidget *parent = 0);
     ~GCMDMainWindow();
 
-    QAction* getActionCopyPointer();
+
+public slots:
+    void addTabLeft(const QDir& path);
+    void addTabRight(const QDir& path);
 
 //private slots:
 //    void changeLeftDrive(int index);

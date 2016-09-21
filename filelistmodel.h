@@ -52,7 +52,7 @@ private slots:
     void checkMerge(int& response, const QString &dirName);
 
 signals:
-    void directoryChanged(const QString& path);
+    void directoryChanged(const QFileInfo& path);
     void fileActivated();
     void deletingDirectory(const QString& path);
 

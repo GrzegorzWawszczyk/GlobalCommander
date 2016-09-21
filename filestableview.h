@@ -23,6 +23,8 @@ signals:
     void tabClicked();
     void copyClicked(const QSet<int>&);
     void moveClicked(const QSet<int>&);
+    void newTabCombinationClicked();
+    void closeTabCombinationClicked();
 
 public slots:
     void copySelected();

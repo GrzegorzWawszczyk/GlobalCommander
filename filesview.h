@@ -1,6 +1,7 @@
 #ifndef FILESVIEW_H
 #define FILESVIEW_H
 
+#include <QFileInfoList>
 #include <QWidget>
 
 namespace Ui {
@@ -15,14 +16,19 @@ public:
     explicit FilesView(QWidget *parent = 0);
     ~FilesView();
     void setSecondView(FilesView*);
+    void setDirectory(const QString& path);
+    void setDrive(const QString &path);
 
 signals:
     void actionCopyClicked();
     void actionMoveClicked();
     void actionDeleteClicked();
+    void pathChanged(const QString& pathName);
+    void newTabCombinationClicked(const QString& path);
+    void closeTabCombinationClicked();
 
 public slots:
-    void changePathLabelAndSpaceLabel(const QString&);
+    void changePathLabelAndSpaceLabel(const QFileInfo&);
     void showInfo();  // DELETE LATER !!!
     void checkIfInDeletedDirectory(const QString& path);
     void handleActionCopyClick();

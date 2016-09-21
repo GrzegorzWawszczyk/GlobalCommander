@@ -17,6 +17,9 @@ FilesCopier::FilesCopier(QFileInfoList &sourceFiles, QString destPath)
 
 void FilesCopier::run()
 {
+    if (sourceFiles.first().dir().path() == destPath)
+        return;
+
     copy(sourceFiles, destPath);
 }
 

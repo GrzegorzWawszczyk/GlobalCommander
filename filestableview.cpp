@@ -37,7 +37,11 @@ void FilesTableView::deleteSelected()
 
 void FilesTableView::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Backspace)
+    if (event->modifiers() == Qt::ControlModifier && event->key() == Qt::Key_T)
+        emit newTabCombinationClicked();
+    else if (event->modifiers() == Qt::ControlModifier && event->key() == Qt::Key_W)
+        emit closeTabCombinationClicked();
+    else if (event->key() == Qt::Key_Backspace)
         emit backspaceClicked();
     else if (event->key() == Qt::Key_Delete)
     {
