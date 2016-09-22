@@ -2,6 +2,7 @@
 #include "filelistmodel.h"
 #include "filestableview.h"
 #include "gcmdmainwindow.h"
+#include "settingswindow.h"
 #include "ui_gcmdmainwindow.h"
 
 #include <QComboBox>
@@ -99,6 +100,16 @@ GCMDMainWindow::GCMDMainWindow(QWidget *parent) :
         QWidget* toDelete = ui->tabW_right->widget(index);
         ui->tabW_right->removeTab(index);
         delete toDelete;
+    });
+
+    connect(ui->a_settings, &QAction::triggered, this, [this](){
+       SettingsWindow* settingsWindow = new SettingsWindow();
+       settingsWindow->setAttribute(Qt::WA_DeleteOnClose, true);
+       settingsWindow->show();
+       connect(settingsWindow, &QWidget::destroyed, this, [this](){
+          QSettings settings;
+          qDebug() << SettingsWindow::getHeaderFont().pointSize();
+       });
     });
 
 }

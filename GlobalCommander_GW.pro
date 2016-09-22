@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     filestableview.cpp \
     fileoperationshandler.cpp \
     filescopier.cpp \
-    filesmover.cpp
+    filesmover.cpp \
+    settingswindow.cpp
 
 HEADERS  += gcmdmainwindow.h \
     filelistmodel.h \
@@ -33,7 +34,9 @@ HEADERS  += gcmdmainwindow.h \
     filestableview.h \
     fileoperationshandler.h \
     filescopier.h \
-    filesmover.h
+    filesmover.h \
+    settingswindow.h
 
 FORMS    += gcmdmainwindow.ui \
-    filesview.ui
+    filesview.ui \
+    settingswindow.ui

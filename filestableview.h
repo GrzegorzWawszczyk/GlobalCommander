@@ -4,6 +4,7 @@
 #include <QKeyEvent>
 #include <QTableView>
 #include <QObject>
+#include <QSettings>
 
 
 
@@ -35,6 +36,8 @@ private:
     void keyPressEvent(QKeyEvent* event) override;
 
     QSet<int> getSelectedIndexes();
+
+    QSettings settings;
 
 };
 

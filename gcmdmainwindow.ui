@@ -99,6 +99,7 @@
     <property name="title">
      <string>Configuration</string>
     </property>
+    <addaction name="a_settings"/>
    </widget>
    <addaction name="menuFiles"/>
    <addaction name="menuConfiguration"/>
@@ -117,6 +118,11 @@
   <action name="a_delete">
    <property name="text">
     <string>Delete files</string>
+   </property>
+  </action>
+  <action name="a_settings">
+   <property name="text">
+    <string>Settings</string>
    </property>
   </action>
  </widget>

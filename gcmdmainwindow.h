@@ -2,8 +2,10 @@
 #define GCMDMAINWINDOW_H
 
 #include "filesview.h"
+#include "settingswindow.h"
 
 #include <QMainWindow>
+#include <QSettings>
 
 namespace Ui {
 class GCMDMainWindow;

@@ -4,6 +4,8 @@
 #include <QAbstractListModel>
 #include <QFileInfoList>
 #include <QFileSystemWatcher>
+#include <QFont>
+#include <QSettings>
 
 class FileListModel : public QAbstractListModel
 {
@@ -60,12 +62,16 @@ private:
     QFileInfoList files;
     QString currentPath;
     QFileSystemWatcher watcher;
-    int fontSize;
+    QFont headerFont;
+    QFont fileListFont;
+
 
     bool copyDirectory(const QString &sourcePath, const QString &destinationPath, bool &yesToAll);
     bool moveDirectory(const QString &sourcePath, const QString &destinationPath, bool &yesToAll);
     bool copyFiles(QFileInfoList &filesToCopy, const QString &path, bool &yesToAll);
     bool moveFiles(QFileInfoList &filesToMove, const QString &path, bool &yesToAll);
+
+    void loadSettings();
 };
 
 #endif // FILELISTMODEL_H

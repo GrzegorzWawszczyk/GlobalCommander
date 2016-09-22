@@ -2,6 +2,7 @@
 #include "filelistmodel.h"
 #include "fileoperationshandler.h"
 #include "filesmover.h"
+#include "settingswindow.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -16,17 +17,13 @@ FileListModel::FileListModel(QObject *parent)
     : QAbstractListModel(parent)
 {
 
-    QFileInfoList drives = QDir::drives();
+    setDirectory(QDir::drives().first().absolutePath());
 
-    setDirectory(drives.first().absolutePath());
-
-    //emit directoryChanged(drives.first().absolutePath());
-
-    watcher.addPath(drives.first().absolutePath());
+    watcher.addPath(QDir::drives().first().absolutePath());
 
     connect(&watcher, &QFileSystemWatcher::directoryChanged, this, &FileListModel::refreshDirectory);
 
-    fontSize = 7;
+    loadSettings();
 }
 
 
@@ -51,7 +48,10 @@ QVariant FileListModel::headerData(int section, Qt::Orientation orientation, int
             }
         }
         if (role == Qt::FontRole)
-            return QFont("Segoe UI", fontSize, QFont::Bold);
+        {
+           // qDebug() << headerFont.pointSize();
+            return headerFont;
+        }
     }
 
     return QVariant();
@@ -91,7 +91,9 @@ QVariant FileListModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     if (role == Qt::FontRole)
-        return QFont("Segoe UI", fontSize, QFont::Normal);
+    {
+        return fileListFont;
+    }
 
     else if (role == Qt::DisplayRole)
     {
@@ -137,7 +139,7 @@ QVariant FileListModel::data(const QModelIndex &index, int role) const
     {
         const QFileInfo& file = files.at(index.row());
         QFileIconProvider fip;
-        return fip.icon(file).pixmap(fontSize * 1.33);
+        return fip.icon(file);//.pixmap(fileListFont.pointSize() * 1.33);
     }
 
     // FIXME: Implement me!
@@ -265,4 +267,17 @@ void FileListModel::checkOverwrite(int &response, const QString &fileName)
 void FileListModel::checkMerge(int &response, const QString& dirName)
 {
     response = QMessageBox::question(nullptr, tr("Confirm overwrite"), tr("Do you want to merge ") + dirName + "?", QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::No | QMessageBox::NoToAll );
+}
+
+void FileListModel::loadSettings()
+{
+//    QSettings settings;
+//    settings.beginGroup("FilesView");
+//    qDebug() << settings.value("headerFont").value<QFont>().pointSize();
+//    headerFont = settings.value("headerFont", QFont("Segoe UI", 9, QFont::Bold)).value<QFont>();
+//    qDebug() << settings.value("headerFont").value<QFont>().pointSize();
+//    fileListFont = settings.value("fileListFont", QFont("Segoe UI", 7, QFont::Normal)).value<QFont>();
+//    settings.endGroup();
+    headerFont = SettingsWindow::getHeaderFont();
+    qDebug() << headerFont.pointSize();
 }

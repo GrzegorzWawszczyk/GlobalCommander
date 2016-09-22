@@ -70,6 +70,8 @@ FilesView::FilesView(QWidget *parent) :
     hh->setSectionResizeMode(FileListModel::Columns::Attributes, QHeaderView::ResizeToContents);
     hh->setSectionResizeMode(FileListModel::Columns::Name, QHeaderView::Stretch);
 
+    ui->tv_files->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+
 }
 
 FilesView::~FilesView()
