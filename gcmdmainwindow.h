@@ -20,14 +20,15 @@ public:
     explicit GCMDMainWindow(QWidget *parent = 0);
     ~GCMDMainWindow();
 
-
 public slots:
     void addTabLeft(const QDir& path);
     void addTabRight(const QDir& path);
 
-//private slots:
-//    void changeLeftDrive(int index);
-//    void changeRightDrive(int index);
+private slots:
+    void changeLeftTabText(const QString& pathName, FilesView *exactView); //Couldn't use const for pointer
+    void changeRightTabText(const QString& pathName, FilesView *exactView); //Couldn't use const for pointer
+    void checkIfLeftViewsInDeletedDirectory(const QString& path);
+    void checkIfRightViewsInDeletedDirectory(const QString& path);
 
 private:
     Ui::GCMDMainWindow *ui;

@@ -3,6 +3,7 @@
 #include "fileoperationshandler.h"
 #include "filesmover.h"
 #include "settingswindow.h"
+#include "gcmdmainwindow.h"
 
 #include <QDateTime>
 #include <QDebug>
@@ -117,7 +118,7 @@ QVariant FileListModel::data(const QModelIndex &index, int role) const
             return file.size();
 
         case Columns::Date:
-            return file.lastModified();
+            return file.lastModified();            
 
         case Columns::Attributes:
             QString str = "";
@@ -254,6 +255,14 @@ void FileListModel::checkIfInDeletedDirectory(const QString &path)
         cdUp();
 }
 
+void FileListModel::refreshView()
+{
+    beginResetModel();
+    loadSettings();
+    endResetModel();
+}
+
+
 void FileListModel::refreshDirectory()
 {
     setDirectory(currentPath);
@@ -271,13 +280,6 @@ void FileListModel::checkMerge(int &response, const QString& dirName)
 
 void FileListModel::loadSettings()
 {
-//    QSettings settings;
-//    settings.beginGroup("FilesView");
-//    qDebug() << settings.value("headerFont").value<QFont>().pointSize();
-//    headerFont = settings.value("headerFont", QFont("Segoe UI", 9, QFont::Bold)).value<QFont>();
-//    qDebug() << settings.value("headerFont").value<QFont>().pointSize();
-//    fileListFont = settings.value("fileListFont", QFont("Segoe UI", 7, QFont::Normal)).value<QFont>();
-//    settings.endGroup();
     headerFont = SettingsWindow::getHeaderFont();
-    qDebug() << headerFont.pointSize();
+    fileListFont = SettingsWindow::getFileListFont();
 }

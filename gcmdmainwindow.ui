@@ -21,8 +21,11 @@
        <enum>Qt::Horizontal</enum>
       </property>
       <widget class="QTabWidget" name="tabW_left">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="tabsClosable">
         <bool>true</bool>
@@ -46,6 +49,9 @@
        </widget>
       </widget>
       <widget class="QTabWidget" name="tabW_right">
+       <property name="focusPolicy">
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="tabPosition">
         <enum>QTabWidget::North</enum>
        </property>

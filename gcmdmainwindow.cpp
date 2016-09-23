@@ -71,12 +71,11 @@ GCMDMainWindow::GCMDMainWindow(QWidget *parent) :
         }
     });
 
-    connect(left, &FilesView::pathChanged, this, [this](const QString& pathName){
-        ui->tabW_left->setTabText(ui->tabW_left->currentIndex(), pathName);
-    });
-    connect(right, &FilesView::pathChanged, this, [this](const QString& pathName){
-        ui->tabW_right->setTabText(ui->tabW_right->currentIndex(), pathName);
-    });
+    connect(left, &FilesView::pathChanged, this, &GCMDMainWindow::changeLeftTabText);
+    connect(right, &FilesView::pathChanged, this, &GCMDMainWindow::changeRightTabText);
+
+    connect(left, &FilesView::deletedDirectory, this, &GCMDMainWindow::checkIfRightViewsInDeletedDirectory);
+    connect(right, &FilesView::deletedDirectory, this, &GCMDMainWindow::checkIfLeftViewsInDeletedDirectory);
 
     connect(ui->tabW_left, &QTabWidget::currentChanged, this, [this](){
         dynamic_cast<FilesView*>(ui->tabW_left->currentWidget())->setSecondView(dynamic_cast<FilesView*>(ui->tabW_right->currentWidget()));
@@ -106,9 +105,12 @@ GCMDMainWindow::GCMDMainWindow(QWidget *parent) :
        SettingsWindow* settingsWindow = new SettingsWindow();
        settingsWindow->setAttribute(Qt::WA_DeleteOnClose, true);
        settingsWindow->show();
-       connect(settingsWindow, &QWidget::destroyed, this, [this](){
-          QSettings settings;
-          qDebug() << SettingsWindow::getHeaderFont().pointSize();
+       connect(settingsWindow, &SettingsWindow::settingsChanged, this, [this](){
+          for (int widgetIndex = 0; widgetIndex < ui->tabW_left->count(); widgetIndex++)
+              dynamic_cast<FilesView*>(ui->tabW_left->widget(widgetIndex))->refreshView();
+
+          for (int widgetIndex = 0; widgetIndex < ui->tabW_right->count(); widgetIndex++)
+              dynamic_cast<FilesView*>(ui->tabW_right->widget(widgetIndex))->refreshView();
        });
     });
 
@@ -140,14 +142,14 @@ void GCMDMainWindow::addTabLeft(const QDir &path)
             delete toDelete;
         }
     });
-    connect(filesView, &FilesView::pathChanged, this, [this](const QString& pathName){
-        ui->tabW_left->setTabText(ui->tabW_left->currentIndex(), pathName);
-    });
+    connect(filesView, &FilesView::pathChanged, this, &GCMDMainWindow::changeLeftTabText);
 
     if (!path.isRoot())
         ui->tabW_left->addTab(filesView, path.dirName());
     else
         ui->tabW_left->addTab(filesView, path.path());
+
+    connect(filesView, &FilesView::deletedDirectory, this, &GCMDMainWindow::checkIfRightViewsInDeletedDirectory);
 }
 
 void GCMDMainWindow::addTabRight(const QDir &path)
@@ -172,12 +174,35 @@ void GCMDMainWindow::addTabRight(const QDir &path)
             delete toDelete;
         }
     });
-    connect(filesView, &FilesView::pathChanged, this, [this](const QString& pathName){
-        ui->tabW_right->setTabText(ui->tabW_right->currentIndex(), pathName);
-    });
+    connect(filesView, &FilesView::pathChanged, this, &GCMDMainWindow::changeRightTabText);
 
     if (!path.isRoot())
         ui->tabW_right->addTab(filesView, path.dirName());
     else
         ui->tabW_right->addTab(filesView, path.path());
+
+    connect(filesView, &FilesView::deletedDirectory, this, &GCMDMainWindow::checkIfLeftViewsInDeletedDirectory);
+}
+
+void GCMDMainWindow::changeLeftTabText(const QString &pathName, FilesView *exactView) //Couldn't use const for pointer
+{
+    ui->tabW_left->setTabText(ui->tabW_left->indexOf(exactView), pathName);
+}
+
+void GCMDMainWindow::changeRightTabText(const QString &pathName, FilesView *exactView) //Couldn't use const for pointer
+{
+    ui->tabW_right->setTabText(ui->tabW_right->indexOf(exactView), pathName);
+}
+
+void GCMDMainWindow::checkIfLeftViewsInDeletedDirectory(const QString &path)
+{
+    for (int widgetIndex = 0; widgetIndex < ui->tabW_left->count(); widgetIndex++)
+        dynamic_cast<FilesView*>(ui->tabW_left->widget(widgetIndex))->checkIfInDeletedDirectory(path);
+}
+
+void GCMDMainWindow::checkIfRightViewsInDeletedDirectory(const QString &path)
+{
+
+    for (int widgetIndex = 0; widgetIndex < ui->tabW_right->count(); widgetIndex++)
+        dynamic_cast<FilesView*>(ui->tabW_right->widget(widgetIndex))->checkIfInDeletedDirectory(path);
 }

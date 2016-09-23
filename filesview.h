@@ -18,14 +18,16 @@ public:
     void setSecondView(FilesView*);
     void setDirectory(const QString& path);
     void setDrive(const QString &path);
+    void refreshView();
 
 signals:
     void actionCopyClicked();
     void actionMoveClicked();
     void actionDeleteClicked();
-    void pathChanged(const QString& pathName);
+    void pathChanged(const QString& pathName, FilesView* exactView); //Couldn't use const for pointer
     void newTabCombinationClicked(const QString& path);
     void closeTabCombinationClicked();
+    void deletedDirectory(const QString& path);
 
 public slots:
     void changePathLabelAndSpaceLabel(const QFileInfo&);
@@ -40,7 +42,7 @@ private slots:
     void copyFiles(const QSet<int> indexes);
     void moveFiles(const QSet<int> indexes);
     void makeDir();
-    void checkIfSecondViewInDeletedDirectory(const QString& path);
+    void checkIfOtherViewsInDeletedDirectory(const QString& path);
     void changeFocus();
 
 private:
@@ -51,6 +53,8 @@ private:
     QString currentDrivePath;
     void setSpaceInfo();
     void focusInEvent(QFocusEvent* event) override;
+
+    void loadSettings();
 };
 
 #endif // FILESVIEW_H

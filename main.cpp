@@ -5,11 +5,12 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    GCMDMainWindow w;
+
 
     QCoreApplication::setOrganizationName("QtGL");
     QCoreApplication::setApplicationName("Global Commander");
 
+    GCMDMainWindow w;
 //    w.setWindowState(Qt::WindowMaximized);
     w.show();
 

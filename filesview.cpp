@@ -2,6 +2,7 @@
 #include "filelistmodel.h"
 #include "fileoperationshandler.h"
 #include "filesview.h"
+#include "settingswindow.h"
 #include "ui_filesview.h"
 
 #include <QDir>
@@ -10,6 +11,7 @@
 #include <QShortcut>
 #include <QDebug>
 #include <QInputDialog>
+#include <QBitArray>
 
 FilesView::FilesView(QWidget *parent) :
     QWidget(parent),
@@ -40,7 +42,7 @@ FilesView::FilesView(QWidget *parent) :
     connect(this, &FilesView::actionMoveClicked, ui->tv_files, &FilesTableView::moveSelected);
     connect(ui->tv_files, &FilesTableView::moveClicked, this, &FilesView::moveFiles);
     connect(this, &FilesView::actionDeleteClicked, ui->tv_files, &FilesTableView::deleteSelected);
-    connect(flm, &FileListModel::deletingDirectory, this, &FilesView::checkIfSecondViewInDeletedDirectory);
+    connect(flm, &FileListModel::deletingDirectory, this, &FilesView::checkIfOtherViewsInDeletedDirectory);
 
     ui->tv_files->setModel(flm);
     ui->tv_files->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -48,7 +50,7 @@ FilesView::FilesView(QWidget *parent) :
 
     QFileInfoList drives = QDir::drives();
     ui->l_path->setText(drives.first().absolutePath());
-    emit pathChanged(drives.first().absolutePath());
+    emit pathChanged(drives.first().absolutePath(), this);
     currentDrivePath = drives.first().absolutePath();
 
     setSpaceInfo();
@@ -72,6 +74,7 @@ FilesView::FilesView(QWidget *parent) :
 
     ui->tv_files->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
+    loadSettings();
 }
 
 FilesView::~FilesView()
@@ -96,14 +99,20 @@ void FilesView::setDrive(const QString &path)
     ui->cb_drive->setCurrentText(dir.path());
 }
 
+void FilesView::refreshView()
+{
+    dynamic_cast<FileListModel*>(ui->tv_files->model())->refreshView();
+    loadSettings();
+}
+
 void FilesView::changePathLabelAndSpaceLabel(const QFileInfo &path)
 {
     ui->l_path->setText(path.filePath());
     setSpaceInfo();
     if (!path.isRoot())
-        emit pathChanged(path.fileName());
+        emit pathChanged(path.fileName(), this);
     else
-        emit pathChanged(path.path());
+        emit pathChanged(path.path(), this);
 }
 
 void FilesView::showInfo()
@@ -156,9 +165,10 @@ void FilesView::makeDir()
     FileOperationsHandler::mkdir(dynamic_cast<FileListModel*>(ui->tv_files->model())->getCurrentPath() + QDir::separator() + dirName);
 }
 
-void FilesView::checkIfSecondViewInDeletedDirectory(const QString &path)
+void FilesView::checkIfOtherViewsInDeletedDirectory(const QString &path)
 {
-    secondView->checkIfInDeletedDirectory(path);
+//    secondView->checkIfInDeletedDirectory(path);
+    emit deletedDirectory(path);
 }
 
 void FilesView::changeFocus()
@@ -178,6 +188,16 @@ void FilesView::setSpaceInfo()
 void FilesView::focusInEvent(QFocusEvent *event)
 {
     ui->tv_files->setFocus();
+}
+
+void FilesView::loadSettings()
+{
+    QBitArray enabledColumns = SettingsWindow::getEnabledColumns();
+    ui->tv_files->setColumnHidden(FileListModel::Columns::Icon, !enabledColumns.at(FileListModel::Columns::Icon));
+    ui->tv_files->setColumnHidden(FileListModel::Columns::Extension, !enabledColumns.at(FileListModel::Columns::Extension));
+    ui->tv_files->setColumnHidden(FileListModel::Columns::Size, !enabledColumns.at(FileListModel::Columns::Size));
+    ui->tv_files->setColumnHidden(FileListModel::Columns::Date, !enabledColumns.at(FileListModel::Columns::Date));
+    ui->tv_files->setColumnHidden(FileListModel::Columns::Attributes, !enabledColumns.at(FileListModel::Columns::Attributes));
 }
 
 
