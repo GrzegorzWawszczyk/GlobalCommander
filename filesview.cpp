@@ -19,8 +19,8 @@ FilesView::FilesView(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    //Creating FileListModel and its connects
     FileListModel* flm = new FileListModel(this);
-
 
     connect(flm, &FileListModel::directoryChanged, this, &FilesView::changePathLabelAndSpaceLabel);
     connect(ui->tv_files, &QTableView::activated, flm, &FileListModel::handleActivate);
@@ -34,9 +34,7 @@ FilesView::FilesView(QWidget *parent) :
     connect(ui->tv_files, &FilesTableView::newTabCombinationClicked, this, [this](){
        emit newTabCombinationClicked(dynamic_cast<FileListModel*>(ui->tv_files->model())->getCurrentPath());
     });
-    connect(ui->tv_files, &FilesTableView::closeTabCombinationClicked, this, [this](){
-       emit closeTabCombinationClicked();
-    });
+    connect(ui->tv_files, &FilesTableView::closeTabCombinationClicked, this, &FilesView::closeTabCombinationClicked);
     connect(this, &FilesView::actionCopyClicked, ui->tv_files, &FilesTableView::copySelected);
     connect(ui->tv_files, &FilesTableView::copyClicked, this, &FilesView::copyFiles);
     connect(this, &FilesView::actionMoveClicked, ui->tv_files, &FilesTableView::moveSelected);
@@ -46,8 +44,9 @@ FilesView::FilesView(QWidget *parent) :
 
     ui->tv_files->setModel(flm);
     ui->tv_files->setSelectionBehavior(QAbstractItemView::SelectRows);
+    //*********************************************************************************************************
 
-
+    //Creating DriveListModel and its connects
     QFileInfoList drives = QDir::drives();
     ui->l_path->setText(drives.first().absolutePath());
     emit pathChanged(drives.first().absolutePath(), this);
@@ -60,10 +59,9 @@ FilesView::FilesView(QWidget *parent) :
     connect(ui->cb_drive, SIGNAL(clicked()), this, SLOT(setFocus()));
     ui->cb_drive->setModel(dlm);
     connect(ui->cb_drive, SIGNAL(currentIndexChanged(int)), this, SLOT(changeDrive(int)));
+    //*********************************************************************************************************
 
-
-//    QHeaderView* vh = ui->tv_files->verticalHeader();
-
+    //Setting header
     QHeaderView* hh =  ui->tv_files->horizontalHeader();
     hh->setSectionResizeMode(FileListModel::Columns::Icon, QHeaderView::ResizeToContents);
     hh->setSectionResizeMode(FileListModel::Columns::Extension, QHeaderView::ResizeToContents);
@@ -73,8 +71,11 @@ FilesView::FilesView(QWidget *parent) :
     hh->setSectionResizeMode(FileListModel::Columns::Name, QHeaderView::Stretch);
 
     ui->tv_files->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+    //*********************************************************************************************************
 
+    //Loading Settings
     loadSettings();
+    //******************
 }
 
 FilesView::~FilesView()
@@ -84,7 +85,7 @@ FilesView::~FilesView()
 
 void FilesView::setSecondView(FilesView *pointer)
 {
-    secondView = pointer;
+    secondView = pointer; //Pointer on view visible in second panel
 }
 
 void FilesView::setDirectory(const QString &path)
@@ -115,16 +116,19 @@ void FilesView::changePathLabelAndSpaceLabel(const QFileInfo &path)
         emit pathChanged(path.path(), this);
 }
 
+//Temporary, called when trying to open file
 void FilesView::showInfo()
 {
     QMessageBox::information(this, tr("Can't open files"), tr("Sorry, I still can't open files :("));  // DELETE LATER !!!
 }
 
+//Checking if this view is in deleted directory, to go up to existing directory
 void FilesView::checkIfInDeletedDirectory(const QString &path)
 {
     dynamic_cast<FileListModel*>(ui->tv_files->model())->checkIfInDeletedDirectory(path);
 }
 
+//Handling menu actions triggering
 void FilesView::handleActionCopyClick()
 {
     emit actionCopyClicked();
@@ -139,6 +143,15 @@ void FilesView::handleActionDeleteClick()
 {
     emit actionDeleteClicked();
 }
+
+void FilesView::handleActionCreateDirClick()
+{
+    //Checking if this is focused view
+    if (ui->tv_files == QApplication::focusWidget())
+        makeDir();
+}
+//**********************************************
+
 
 void FilesView::changeDrive(int index)
 {
@@ -161,13 +174,26 @@ void FilesView::moveFiles(const QSet<int> indexes)
 
 void FilesView::makeDir()
 {
-    QString dirName = QInputDialog::getText(nullptr, tr("Type directory name"), tr("Directory name"), QLineEdit::Normal);
-    FileOperationsHandler::mkdir(dynamic_cast<FileListModel*>(ui->tv_files->model())->getCurrentPath() + QDir::separator() + dirName);
+    QString currentPath = dynamic_cast<FileListModel*>(ui->tv_files->model())->getCurrentPath();
+    QString dirName = QInputDialog::getText(nullptr, tr("Type directory name"), tr("Directory name"), QLineEdit::Normal, tr("New Folder"));
+    while (dirName.isEmpty())
+    {
+        QMessageBox::warning(nullptr, tr("Empty name"), tr("Directory name can't be empty"));
+        dirName = QInputDialog::getText(nullptr, tr("Type directory name"), tr("Directory name"), QLineEdit::Normal, tr("New Folder"));
+    }
+    QString newDirPath = currentPath + QDir::separator() + dirName;
+    int counter = 1;
+    while (QDir(newDirPath).exists())
+    {
+        counter++;
+        newDirPath = currentPath + QDir::separator() + dirName + " (" + QString::number(counter) + ")";
+    }
+    FileOperationsHandler::mkdir(newDirPath);
 }
 
+//Checking if other views are in deleted directory, to go up to existing directory
 void FilesView::checkIfOtherViewsInDeletedDirectory(const QString &path)
 {
-//    secondView->checkIfInDeletedDirectory(path);
     emit deletedDirectory(path);
 }
 

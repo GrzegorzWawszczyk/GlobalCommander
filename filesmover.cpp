@@ -4,9 +4,10 @@
 #include <QDir>
 #include <QMessageBox>
 
-FilesMover::FilesMover(QFileInfoList &sourceFiles, QString destPath)
+FilesMover::FilesMover(QFileInfoList &sourceFiles, QString destPath, const QMessageBox::StandardButton &decision)
     :   sourceFiles(std::move(sourceFiles)),
-        destPath(destPath)
+        destPath(destPath),
+        decision(decision)
 {
     yesToAll = false;
     noToAll = false;
@@ -37,21 +38,20 @@ void FilesMover::move(const QFileInfoList &filesToMove, const QString &path)
 
             else if (QFileInfo(destination).exists())
             {
-                int response;
-                emit fileExists(response, source.fileName());
+                emit fileExists(source.fileName());
 
-                if (response == QMessageBox::YesToAll)
+                if (decision == QMessageBox::YesToAll)
                 {
                     yesToAll = true;
                     QFile::remove(destination);
                     QFile::rename(source.filePath(), destination);
                 }
-                else if (response == QMessageBox::Yes)
+                else if (decision == QMessageBox::Yes)
                 {
                     QFile::remove(destination);
                     QFile::rename(source.filePath(), destination);
                 }
-                else if (response == QMessageBox::NoToAll)
+                else if (decision == QMessageBox::NoToAll)
                     noToAll = true;
             }
             else
@@ -73,19 +73,18 @@ void FilesMover::move(const QFileInfoList &filesToMove, const QString &path)
             }
             else if (destDir.exists())
             {
-                int response;
-                emit dirExists(response, dir.dirName());
+                emit dirExists(dir.dirName());
 
-                if (response == QMessageBox::YesToAll)
+                if (decision == QMessageBox::YesToAll)
                 {
                     yesToAll = true;
                     move(dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot), destDir.path());
                 }
-                else if (response == QMessageBox::Yes)
+                else if (decision == QMessageBox::Yes)
                 {
                     move(dir.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot), destDir.path());
                 }
-                else if (response == QMessageBox::NoToAll)
+                else if (decision == QMessageBox::NoToAll)
                     noToAll = true;
             }
             else

@@ -17,13 +17,13 @@ public:
 
 signals:
     void backspaceClicked();
-    void deleteClicked(const QSet<int>&);
-    void F5Clicked(const QSet<int>&);
-    void F6Clicked(const QSet<int>&);
+    void deleteClicked(const QSet<int>& indexes);
+    void F5Clicked(const QSet<int>& indexes);
+    void F6Clicked(const QSet<int>& indexes);
     void F7Clicked();
     void tabClicked();
-    void copyClicked(const QSet<int>&);
-    void moveClicked(const QSet<int>&);
+    void copyClicked(const QSet<int>& indexes);
+    void moveClicked(const QSet<int>& indexes);
     void newTabCombinationClicked();
     void closeTabCombinationClicked();
 

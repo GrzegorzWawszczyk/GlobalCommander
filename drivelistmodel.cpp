@@ -44,10 +44,9 @@ void DriveListModel::changeDriveList()
 void DriveListModel::refreshDriveList()
 {
     driveList.clear();
-    QFileInfoList drives = QDir::drives();
 
-        for (QFileInfo driveInfo : drives)
-        {
-            driveList.append(driveInfo.absolutePath());
-        }
+    for (QFileInfo driveInfo : QDir::drives())
+    {
+        driveList.append(driveInfo.absolutePath());
+    }
 }

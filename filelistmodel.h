@@ -5,6 +5,7 @@
 #include <QFileInfoList>
 #include <QFileSystemWatcher>
 #include <QFont>
+#include <QMessageBox>
 #include <QSettings>
 
 class FileListModel : public QAbstractListModel
@@ -51,8 +52,8 @@ public slots:
 
 private slots:
     void refreshDirectory();
-    void checkOverwrite(int& response, const QString& fileName);
-    void checkMerge(int& response, const QString &dirName);
+    void checkOverwrite(const QString& fileName);
+    void checkMerge(const QString &dirName);
 
 signals:
     void directoryChanged(const QFileInfo& path);
@@ -65,6 +66,8 @@ private:
     QFileSystemWatcher watcher;
     QFont headerFont;
     QFont fileListFont;
+
+    QMessageBox::StandardButton lastFileOverwriteDecision;
 
 
     bool copyDirectory(const QString &sourcePath, const QString &destinationPath, bool &yesToAll);

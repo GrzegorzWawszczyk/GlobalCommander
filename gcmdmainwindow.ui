@@ -14,7 +14,7 @@
    <string>GlobalCommander</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout" stretch="1,0">
     <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
@@ -81,6 +81,50 @@
       </widget>
      </widget>
     </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QPushButton" name="pb_copy">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="text">
+         <string>[F5] Copy</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pb_move">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="text">
+         <string>[F6] Move</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pb_mkDir">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="text">
+         <string>[F7] Create Directory</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pb_delete">
+        <property name="focusPolicy">
+         <enum>Qt::NoFocus</enum>
+        </property>
+        <property name="text">
+         <string>[Del] Delete</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -100,6 +144,7 @@
     <addaction name="a_copy"/>
     <addaction name="a_move"/>
     <addaction name="a_delete"/>
+    <addaction name="a_createDir"/>
    </widget>
    <widget class="QMenu" name="menuConfiguration">
     <property name="title">
@@ -129,6 +174,11 @@
   <action name="a_settings">
    <property name="text">
     <string>Settings</string>
+   </property>
+  </action>
+  <action name="a_createDir">
+   <property name="text">
+    <string>Create directory</string>
    </property>
   </action>
  </widget>

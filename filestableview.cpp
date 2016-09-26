@@ -13,6 +13,7 @@ FilesTableView::FilesTableView(QWidget *parent)
 
 void FilesTableView::copySelected()
 {
+    //Checking if this is focused view
     if (this == QApplication::focusWidget())
     {
         emit copyClicked(getSelectedIndexes());

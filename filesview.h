@@ -36,6 +36,7 @@ public slots:
     void handleActionCopyClick();
     void handleActionMoveClick();
     void handleActionDeleteClick();
+    void handleActionCreateDirClick();
 
 private slots:
     void changeDrive(int);

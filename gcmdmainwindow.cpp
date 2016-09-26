@@ -43,12 +43,23 @@ GCMDMainWindow::GCMDMainWindow(QWidget *parent) :
 
     connect(ui->a_copy, &QAction::triggered, left, &FilesView::handleActionCopyClick);
     connect(ui->a_copy, &QAction::triggered, right, &FilesView::handleActionCopyClick);
+    connect(ui->pb_copy, &QPushButton::clicked, left, &FilesView::handleActionCopyClick);
+    connect(ui->pb_copy, &QPushButton::clicked, right, &FilesView::handleActionCopyClick);
 
     connect(ui->a_move, &QAction::triggered, left, &FilesView::handleActionMoveClick);
     connect(ui->a_move, &QAction::triggered, right, &FilesView::handleActionMoveClick);
+    connect(ui->pb_move, &QPushButton::clicked, left, &FilesView::handleActionMoveClick);
+    connect(ui->pb_move, &QPushButton::clicked, right, &FilesView::handleActionMoveClick);
 
     connect(ui->a_delete, &QAction::triggered, left, &FilesView::handleActionDeleteClick);
     connect(ui->a_delete, &QAction::triggered, right, &FilesView::handleActionDeleteClick);
+    connect(ui->pb_delete, &QPushButton::clicked, left, &FilesView::handleActionDeleteClick);
+    connect(ui->pb_delete, &QPushButton::clicked, right, &FilesView::handleActionDeleteClick);
+
+    connect(ui->a_createDir, &QAction::triggered, left, &FilesView::handleActionCreateDirClick);
+    connect(ui->a_createDir, &QAction::triggered, right, &FilesView::handleActionCreateDirClick);
+    connect(ui->pb_mkDir, &QPushButton::clicked, left, &FilesView::handleActionCreateDirClick);
+    connect(ui->pb_mkDir, &QPushButton::clicked, right, &FilesView::handleActionCreateDirClick);
 
     connect(left, &FilesView::newTabCombinationClicked, this, &GCMDMainWindow::addTabLeft);
     connect(left, &FilesView::closeTabCombinationClicked, this, [this]()
@@ -133,6 +144,11 @@ void GCMDMainWindow::addTabLeft(const QDir &path)
     connect(ui->a_copy, &QAction::triggered, filesView, &FilesView::handleActionCopyClick);
     connect(ui->a_move, &QAction::triggered, filesView, &FilesView::handleActionMoveClick);
     connect(ui->a_delete, &QAction::triggered, filesView, &FilesView::handleActionDeleteClick);
+    connect(ui->a_createDir, &QAction::triggered, filesView, &FilesView::handleActionCreateDirClick);
+    connect(ui->pb_copy, &QPushButton::clicked, filesView, &FilesView::handleActionCopyClick);
+    connect(ui->pb_move, &QPushButton::clicked, filesView, &FilesView::handleActionMoveClick);
+    connect(ui->pb_delete, &QPushButton::clicked, filesView, &FilesView::handleActionDeleteClick);
+    connect(ui->pb_mkDir, &QPushButton::clicked, filesView, &FilesView::handleActionCreateDirClick);
     connect(filesView, &FilesView::newTabCombinationClicked, this, &GCMDMainWindow::addTabLeft);
     connect(filesView, &FilesView::closeTabCombinationClicked, this, [this](){
         if (ui->tabW_left->count() > 1)
@@ -162,8 +178,14 @@ void GCMDMainWindow::addTabRight(const QDir &path)
     dynamic_cast<FilesView*>(ui->tabW_left->currentWidget())->setSecondView(filesView);
 
     connect(ui->a_copy, &QAction::triggered, filesView, &FilesView::handleActionCopyClick);
+    connect(ui->pb_copy, &QPushButton::clicked, filesView, &FilesView::handleActionCopyClick);
     connect(ui->a_move, &QAction::triggered, filesView, &FilesView::handleActionMoveClick);
     connect(ui->a_delete, &QAction::triggered, filesView, &FilesView::handleActionDeleteClick);
+    connect(ui->a_createDir, &QAction::triggered, filesView, &FilesView::handleActionCreateDirClick);
+    connect(ui->pb_copy, &QPushButton::clicked, filesView, &FilesView::handleActionCopyClick);
+    connect(ui->pb_move, &QPushButton::clicked, filesView, &FilesView::handleActionMoveClick);
+    connect(ui->pb_delete, &QPushButton::clicked, filesView, &FilesView::handleActionDeleteClick);
+    connect(ui->pb_mkDir, &QPushButton::clicked, filesView, &FilesView::handleActionCreateDirClick);
     connect(filesView, &FilesView::newTabCombinationClicked, this, &GCMDMainWindow::addTabRight);
     connect(filesView, &FilesView::closeTabCombinationClicked, this, [this]()
     {

@@ -15,7 +15,8 @@
 #include <QWaitCondition>
 
 FileListModel::FileListModel(QObject *parent)
-    : QAbstractListModel(parent)
+    : QAbstractListModel(parent),
+      lastFileOverwriteDecision(QMessageBox::No)
 {
 
     setDirectory(QDir::drives().first().absolutePath());
@@ -50,7 +51,6 @@ QVariant FileListModel::headerData(int section, Qt::Orientation orientation, int
         }
         if (role == Qt::FontRole)
         {
-           // qDebug() << headerFont.pointSize();
             return headerFont;
         }
     }
@@ -140,10 +140,9 @@ QVariant FileListModel::data(const QModelIndex &index, int role) const
     {
         const QFileInfo& file = files.at(index.row());
         QFileIconProvider fip;
-        return fip.icon(file);//.pixmap(fileListFont.pointSize() * 1.33);
+        return fip.icon(file);
     }
 
-    // FIXME: Implement me!
     return QVariant();
 }
 
@@ -152,13 +151,11 @@ void FileListModel::setDirectory(const QString& path)
     beginResetModel();
     watcher.removePath(currentPath);
     watcher.addPath(path);
-//    qDebug() << watcher.directories();
 
     currentPath = path;
 
     QDir dir(path);
 
-    //dir.setPath(path);
     files = dir.entryInfoList(QDir::AllEntries | QDir::NoDot, QDir::DirsFirst | QDir::IgnoreCase);
     emit directoryChanged(QFileInfo(path));
 
@@ -194,10 +191,15 @@ void FileListModel::deleteFiles(QSet<int> indexes)
     if (!QDir(currentPath).isRoot() && indexes.contains(0))
         indexes.remove(0);
 
-    if ( !(indexes.size() == 1 && QMessageBox::question(0, tr("Confirm delete"), tr("Are you sure you want to delete this?")) == QMessageBox::Yes) &&
-         !(indexes.size() > 1 && QMessageBox::question(0, tr("Confirm delete"), tr("Are you sure you want to delete ") + QString::number(indexes.size()) + tr(" selected items?")) == QMessageBox::Yes))
+    QString message = indexes.size() == 1
+            ? tr("Are you sure you want to delete this?")
+            : tr("Are you sure you want to delete %1 selected items?").arg(indexes.size());
 
+    if (QMessageBox::question(nullptr, tr("Confirm delete"), message) != QMessageBox::Yes)
+    {
         return;
+    }
+
 
     QFileInfoList filesToRemove;
     for (int index : indexes)
@@ -222,7 +224,7 @@ void FileListModel::copyFiles(QSet<int> indexes, QString path)
      {
          sourceFiles.append(files.at(index));
      }
-     FilesCopier* copier = new FilesCopier(sourceFiles, path);
+     FilesCopier* copier = new FilesCopier(sourceFiles, path, lastFileOverwriteDecision);
      connect(copier, &FilesCopier::finished, copier, &FilesCopier::deleteLater);
      connect(copier, &FilesCopier::fileExists, this, &FileListModel::checkOverwrite, Qt::BlockingQueuedConnection);
      connect(copier, &FilesCopier::dirExists, this, &FileListModel::checkMerge, Qt::BlockingQueuedConnection);
@@ -242,7 +244,7 @@ void FileListModel::moveFiles(QSet<int> indexes, const QString &path)
     {
         sourceFiles.append(files.at(index));
     }
-    FilesMover* mover = new FilesMover(sourceFiles, path);
+    FilesMover* mover = new FilesMover(sourceFiles, path, lastFileOverwriteDecision);
     connect(mover, &FilesMover::finished, mover, &FilesMover::deleteLater);
     connect(mover, &FilesMover::fileExists, this, &FileListModel::checkOverwrite, Qt::BlockingQueuedConnection);
     connect(mover, &FilesMover::dirExists, this, &FileListModel::checkMerge, Qt::BlockingQueuedConnection);
@@ -268,14 +270,16 @@ void FileListModel::refreshDirectory()
     setDirectory(currentPath);
 }
 
-void FileListModel::checkOverwrite(int &response, const QString &fileName)
+void FileListModel::checkOverwrite(const QString &fileName)
 {
-    response = QMessageBox::question(nullptr, tr("Confirm overwrite"), tr("Do you want to overwrite ") + fileName + "?", QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::No | QMessageBox::NoToAll );
+    lastFileOverwriteDecision = QMessageBox::question(nullptr, tr("Confirm overwrite"),
+    tr("Do you want to overwrite ") + fileName + "?", QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::No | QMessageBox::NoToAll );
 }
 
-void FileListModel::checkMerge(int &response, const QString& dirName)
+void FileListModel::checkMerge(const QString& dirName)
 {
-    response = QMessageBox::question(nullptr, tr("Confirm overwrite"), tr("Do you want to merge ") + dirName + "?", QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::No | QMessageBox::NoToAll );
+    lastFileOverwriteDecision = QMessageBox::question(nullptr, tr("Confirm overwrite"),
+    tr("Do you want to merge ") + dirName + "?", QMessageBox::Yes | QMessageBox::YesToAll | QMessageBox::No | QMessageBox::NoToAll );
 }
 
 void FileListModel::loadSettings()
