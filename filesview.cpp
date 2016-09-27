@@ -27,6 +27,7 @@ FilesView::FilesView(QWidget *parent) :
     connect(flm, &FileListModel::fileActivated, this, &FilesView::showInfo);  // DELETE LATER !!!
     connect(ui->tv_files, &FilesTableView::backspaceClicked, flm, &FileListModel::cdUp);
     connect(ui->tv_files, &FilesTableView::deleteClicked, flm, &FileListModel::deleteFiles);
+    connect(ui->tv_files, &FilesTableView::F3Clicked, this, &FilesView::listFile);
     connect(ui->tv_files, &FilesTableView::F5Clicked, this, &FilesView::copyFiles);
     connect(ui->tv_files, &FilesTableView::F6Clicked, this, &FilesView::moveFiles);
     connect(ui->tv_files, &FilesTableView::F7Clicked, this, &FilesView::makeDir);
@@ -200,6 +201,11 @@ void FilesView::checkIfOtherViewsInDeletedDirectory(const QString &path)
 void FilesView::changeFocus()
 {
     secondView->setFocus();
+}
+
+void FilesView::listFile(const QSet<int> &indexes)
+{
+    emit openListerRequested(dynamic_cast<FileListModel*>(ui->tv_files->model())->getFilePathByIndexes(indexes));
 }
 
 void FilesView::setSpaceInfo()

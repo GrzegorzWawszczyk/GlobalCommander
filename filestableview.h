@@ -18,6 +18,7 @@ public:
 signals:
     void backspaceClicked();
     void deleteClicked(const QSet<int>& indexes);
+    void F3Clicked(const QSet<int>& indexes);//prepared for multiple items handling in future
     void F5Clicked(const QSet<int>& indexes);
     void F6Clicked(const QSet<int>& indexes);
     void F7Clicked();

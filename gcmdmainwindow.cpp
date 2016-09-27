@@ -2,6 +2,7 @@
 #include "filelistmodel.h"
 #include "filestableview.h"
 #include "gcmdmainwindow.h"
+#include "lister.h"
 #include "settingswindow.h"
 #include "ui_gcmdmainwindow.h"
 
@@ -60,6 +61,9 @@ GCMDMainWindow::GCMDMainWindow(QWidget *parent) :
     connect(ui->a_createDir, &QAction::triggered, right, &FilesView::handleActionCreateDirClick);
     connect(ui->pb_mkDir, &QPushButton::clicked, left, &FilesView::handleActionCreateDirClick);
     connect(ui->pb_mkDir, &QPushButton::clicked, right, &FilesView::handleActionCreateDirClick);
+
+    connect(left, &FilesView::openListerRequested, this, &GCMDMainWindow::openLister);
+    connect(right, &FilesView::openListerRequested, this, &GCMDMainWindow::openLister);
 
     connect(left, &FilesView::newTabCombinationClicked, this, &GCMDMainWindow::addTabLeft);
     connect(left, &FilesView::closeTabCombinationClicked, this, [this]()
@@ -149,6 +153,7 @@ void GCMDMainWindow::addTabLeft(const QDir &path)
     connect(ui->pb_move, &QPushButton::clicked, filesView, &FilesView::handleActionMoveClick);
     connect(ui->pb_delete, &QPushButton::clicked, filesView, &FilesView::handleActionDeleteClick);
     connect(ui->pb_mkDir, &QPushButton::clicked, filesView, &FilesView::handleActionCreateDirClick);
+    connect(filesView, &FilesView::openListerRequested, this, &GCMDMainWindow::openLister);
     connect(filesView, &FilesView::newTabCombinationClicked, this, &GCMDMainWindow::addTabLeft);
     connect(filesView, &FilesView::closeTabCombinationClicked, this, [this](){
         if (ui->tabW_left->count() > 1)
@@ -186,6 +191,7 @@ void GCMDMainWindow::addTabRight(const QDir &path)
     connect(ui->pb_move, &QPushButton::clicked, filesView, &FilesView::handleActionMoveClick);
     connect(ui->pb_delete, &QPushButton::clicked, filesView, &FilesView::handleActionDeleteClick);
     connect(ui->pb_mkDir, &QPushButton::clicked, filesView, &FilesView::handleActionCreateDirClick);
+    connect(filesView, &FilesView::openListerRequested, this, &GCMDMainWindow::openLister);
     connect(filesView, &FilesView::newTabCombinationClicked, this, &GCMDMainWindow::addTabRight);
     connect(filesView, &FilesView::closeTabCombinationClicked, this, [this]()
     {
@@ -227,4 +233,18 @@ void GCMDMainWindow::checkIfRightViewsInDeletedDirectory(const QString &path)
 
     for (int widgetIndex = 0; widgetIndex < ui->tabW_right->count(); widgetIndex++)
         dynamic_cast<FilesView*>(ui->tabW_right->widget(widgetIndex))->checkIfInDeletedDirectory(path);
+}
+
+void GCMDMainWindow::openLister(const QStringList &paths)
+{
+    if (paths.size() > 1)
+    {
+        QMessageBox::warning(nullptr, tr("Too many files selected"), tr("Lister can't open multiple files for now"));
+        return;
+    }
+//    qDebug() << paths.first();
+    Lister lister(paths.first());
+    lister.setWindowTitle("Lister - [" + paths.first() + "]");
+    lister.setWindowFlags(Qt::Window);
+    lister.exec();
 }

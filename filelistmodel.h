@@ -44,6 +44,7 @@ public:
     void moveFiles(QSet<int> indexes, const QString& path);
     void checkIfInDeletedDirectory(const QString &path);
     void refreshView();
+    QStringList getFilePathByIndexes(const QSet<int>& indexes);
 
 public slots:
     void handleActivate(const QModelIndex& index);

@@ -13,5 +13,5 @@ void DrivesComboBox::showPopup()
     QString lastItem = currentText();
     emit clicked();
     QComboBox::showPopup();
-    setCurrentText(lastItem);
+//    setCurrentText(lastItem);
 }

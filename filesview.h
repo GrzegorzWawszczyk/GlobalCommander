@@ -28,6 +28,7 @@ signals:
     void newTabCombinationClicked(const QString& path);
     void closeTabCombinationClicked();
     void deletedDirectory(const QString& path);
+    void openListerRequested(const QStringList& paths);//prepared for multiple items handling in future
 
 public slots:
     void changePathLabelAndSpaceLabel(const QFileInfo&);
@@ -45,6 +46,7 @@ private slots:
     void makeDir();
     void checkIfOtherViewsInDeletedDirectory(const QString& path);
     void changeFocus();
+    void listFile(const QSet<int>& indexes);
 
 private:
     Ui::FilesView *ui;

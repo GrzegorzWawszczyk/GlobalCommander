@@ -48,6 +48,10 @@ void FilesTableView::keyPressEvent(QKeyEvent *event)
     {
         emit deleteClicked(getSelectedIndexes());
     }
+    else if (event->key() == Qt::Key_F3)
+    {
+        emit F3Clicked(getSelectedIndexes());
+    }
     else if (event->key() == Qt::Key_F5)
     {
         emit F5Clicked(getSelectedIndexes());

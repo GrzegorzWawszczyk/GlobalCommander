@@ -264,6 +264,15 @@ void FileListModel::refreshView()
     endResetModel();
 }
 
+QStringList FileListModel::getFilePathByIndexes(const QSet<int> &indexes)
+{
+    QStringList list;
+    for (int index : indexes)
+        list.append(files.at(index).filePath());
+
+    return list;
+}
+
 
 void FileListModel::refreshDirectory()
 {

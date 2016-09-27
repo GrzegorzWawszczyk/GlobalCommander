@@ -29,6 +29,7 @@ private slots:
     void changeRightTabText(const QString& pathName, FilesView *exactView); //Couldn't use const for pointer
     void checkIfLeftViewsInDeletedDirectory(const QString& path);
     void checkIfRightViewsInDeletedDirectory(const QString& path);
+    void openLister(const QStringList &paths);
 
 private:
     Ui::GCMDMainWindow *ui;
